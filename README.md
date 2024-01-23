@@ -1,3 +1,10 @@
+AFTER DOWNLOADING THE CODE
+-- npm install
+-- composer install
+
+php artisan serve // to run the server
+npm run dev --- to enable hot restart
+
 using bootstrap
 composer require laravel/ui --dev
 php artisan ui bootstrap --auth
