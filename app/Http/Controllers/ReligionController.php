@@ -36,7 +36,8 @@ class ReligionController extends Controller
             $religion = new Religion();
             $religion->name = $req->name;
             $religion->save();
-            return redirect()->route('religion.index');
+            return redirect()->route('religion.index')
+            ->with('successMessage','New Religion Added');
         }catch(Exception $e){
             
         }

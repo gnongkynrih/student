@@ -30,9 +30,13 @@ Route::controller(ClassInfoController::class)->group(function () {
 });
 
 Route::controller(AdmissionUserController::class)->group(function(){
+    Route::get('/admission/registrationcomplete','registrationcomplete')->name('admission.registrationcomplete');
+    Route::get('/registration/verification/{token}/{email}','verifyemail')->name('admission.verifyemail');
+    Route::get('/admission/register','registration')->name('admission.registration');
     Route::post('/admission/register','register')->name('admission.register');
     Route::get('/admission/login','loginpage')->name('admission.loginpage');
     Route::post('/admission/login','login')->name('admission.login');
+    Route::get('/admission/thankyou','thankyou')->name('admission.thankyou');
 });
 Auth::routes();
 

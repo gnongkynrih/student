@@ -14,7 +14,7 @@ class ClassInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:10|min:1',
+            'name' => 'required|string|max:10|min:3',
             'is_active'=>'nullable|string|max:1'
         ];
     }

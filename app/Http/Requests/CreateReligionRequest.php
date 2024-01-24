@@ -22,7 +22,7 @@ class CreateReligionRequest extends FormRequest
         return [
             'name.required' => 'Name is mandatory',
             'name.string' => 'Name must be string',
-            'name.min' => 'Name must be at least 2 characters',
+            'name.min' => 'Religion Name must be at least 2 characters',
             'name.max' => 'Name must be at most 3 characters',
         ];
     }

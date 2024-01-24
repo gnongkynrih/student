@@ -9,10 +9,6 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
@@ -73,6 +69,13 @@
         </nav>
 
         <main class="py-4">
+
+            @if(\Session::has('successMessage'))
+                <div class="alert alert-primary" role="alert">
+                    {!! \Session::get('successMessage') !!}
+                </div>
+            @endif
+
             @yield('content')
         </main>
     </div>

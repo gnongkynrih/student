@@ -2,35 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\AdmissionUser;
+use App\Mail\RegistrationMail;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\RegisterResource;
 use App\Http\Requests\RegisterUserRequest;
-use Illuminate\Support\Facades\Auth;
 
 class AdmissionUserController extends Controller
 {
-    public function loginpage(){
-        return view('auth.login');
+    public function registration(){
+        return view('admissionuser.registration');
     }
     public function register(RegisterUserRequest $request){
         try{
             $user = new AdmissionUser();
             $user->mobile = $request->mobile;
             $user->email = $request->email;
+            $user->token = Str::uuid();
             $user->password = Hash::make($request->password);
             $user->save();
-            return response()->json([
-                'data'=>new RegisterResource($user),
-                'message'=>'User created'
-            ],201);
+            
+            //send an email
+            $data = [
+                'token'=>$user->token,
+                'email'=>$user->email
+            ];
+            Mail::to($request->email)->send(new RegistrationMail($data));
+            return redirect()->route('admission.registrationcomplete');
         }catch(Exception $e){
-            return response()->json([
-                'message'=>'User cannot be created'
-            ],404);
+            
         }
+    }
+    public function registrationcomplete(){
+        return view('admissionuser.registrationcomplete');
+    }
+    public function verifyemail($token,$email){
+        $user = AdmissionUser::where('token','=',$token)
+        ->where('email','=',$email)->first();
+        if($user == null){
+            return redirect()->route('admission.thankyou')->with('success','false');
+        }else{
+            if($user->email_verified_at != null){
+                return redirect()->route('admission.thankyou')->with('success','done');
+            }
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+            return redirect()->route('admission.thankyou')->with('success','true');
+        }
+    }
+    public function thankyou(){
+        return view('admissionuser.thankyou');
     }
     // public function login(LoginRequest $request){
     //     try{

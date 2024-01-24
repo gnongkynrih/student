@@ -22,7 +22,8 @@ class ClassInfoController extends Controller
             $classInfo = new ClassInfo();
             $classInfo->name = $request->name;
             $classInfo->save();
-            return redirect()->route('classinfo.index');
+            return redirect()->route('classinfo.index')
+            ->with('successMessage','New Class Detail Added Successfully');
         }catch(Exception $e){
             
         }

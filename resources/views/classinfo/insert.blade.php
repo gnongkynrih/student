@@ -13,9 +13,14 @@
         @if(isset($classInfo))
           @method('PUT')
         @endif
-        <div class="mb-1">
-          <label class="form-label">Class Name</label>
+        <div class="form-floating mb-1">
           <input class="form-control" type="text" value="{{ isset($classInfo) ? $classInfo->name : ''}}" name="name" placeholder="Class Name">
+          <label>Class Name</label>
+          @error('name')
+            <span class="text-danger text-sm" >
+              {{ $message}}
+            </span>
+          @enderror
         </div>
       </div>
       <div class="card-footer text-center">
