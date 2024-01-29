@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\ClassInfoController;
 use App\Http\Controllers\AdmissionUserController;
+use App\Http\Controllers\AdmissionApplicationController;
 
 
 Route::get('/', function () {
@@ -39,5 +40,16 @@ Route::controller(AdmissionUserController::class)->group(function(){
     Route::get('/admission/thankyou','thankyou')->name('admission.thankyou');
 });
 Auth::routes();
+
+Route::controller(AdmissionApplicationController::class)->group(function(){
+    Route::get('/admission/parents','family')->name('admission.parents');
+    Route::post('/admission/parents','parentsInfo')->name('admission.parentsinfo');
+    Route::get('/admission/editpersonal','editpersonal')->name('admission.editpersonal');
+    Route::get('/admission/personal','getPersonalInfo')->name('admission.getpersonalinfo');
+    Route::post('/admission/personal','personal')->name('admission.personal');
+    Route::post('/admission/upload','uploadDocuments')->name('admission.upload');
+    Route::get('/admission/{id}','show')->name('admission.show');
+    Route::post('/admission/submit','submit')->name('admission.submit');
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

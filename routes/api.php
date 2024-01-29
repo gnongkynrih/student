@@ -23,7 +23,16 @@ Route::controller(StateController::class)->group(function () {
     Route::delete('/state/{state}', 'destroy')->name('state.delete');
 });
 
-
+Route::controller(ReligionController::class)->group(function () {
+    Route::get('/religion', 'index')->name('religion.index');
+    Route::get('/religion/create', 'create')->name('religion.create');
+    Route::get('religion/{id}/edit', 'edit')->name('religion.edit');
+    Route::get('/religion/{id}', 'select')->name('religion.select');
+    Route::post('/religion/store', 'store')->name('religion.store');
+    Route::put('/religion/{religion}', 'update')->name('religion.update');
+    Route::delete('/religion/{religion}', 'delete')->name('religion.delete');
+    Route::post('/religion/upload', 'storeImage')->name('religion.storeimage');
+});
 
 Route::group(['middleware' => ['auth:admission']], function () {
     Route::controller(AdmissionApplicationController::class)->group(function(){

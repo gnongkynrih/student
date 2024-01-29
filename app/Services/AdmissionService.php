@@ -10,6 +10,7 @@ use Carbon\Exceptions\Exception;
 class AdmissionService
 {
     public function save($data){
+      $data['admission_user_id'] = session('admission_user_id');
       return Applicant::create($data);
     }
     

@@ -35,7 +35,6 @@ class PersonalInfoFormRequest extends FormRequest
             'community'=>'required|string|max:30',
             'is_catholic'=>'nullable|string',
             'balang'=>'nullable|string',
-            'admission_user_id'=>'required|integer',
             'class_name' =>'required|string|max:10',
         ];
     }

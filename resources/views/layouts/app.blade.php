@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <link rel="stylesheet" href="resources/css/app.css">
 </head>
 <body>
     <div id="app">
@@ -73,6 +74,11 @@
             @if(\Session::has('successMessage'))
                 <div class="alert alert-primary" role="alert">
                     {!! \Session::get('successMessage') !!}
+                </div>
+            @endif
+            @if(\Session::has('errorMessage'))
+                <div class="alert alert-danger" role="alert">
+                    {!! \Session::get('errorMessage') !!}
                 </div>
             @endif
 
