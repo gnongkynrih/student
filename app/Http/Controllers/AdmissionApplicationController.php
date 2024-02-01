@@ -26,6 +26,16 @@ class AdmissionApplicationController extends Controller
         $this->utilService = $utilService;
     }
 
+    public function dashboard(){
+        session(['applicant_id'=>null]);
+        if(session('admission_user_id') == null){
+            return redirect()->route('admission.loginpage')->with('errorMessage','Your session has expired. Please login again');
+        }
+
+        //get all applicants
+        $applicants = Applicant::where('admission_user_id','=',session('admission_user_id'))->get();
+        return view('admission.dashboard',compact('applicants'));
+    }
     public function show($id){
         $applicant = Applicant::find($id);
         if($applicant == null){
@@ -40,7 +50,6 @@ class AdmissionApplicationController extends Controller
         ],201);
     }
     public function getPersonalInfo(){
-        session(['admission_user_id'=>1]);
         $categories = array('ST','GEN','OBC','SC','OTH');
         $religions =ReligionResource::collection(Religion::all());
         $admissiontoclass = ClassInfoResource::collection(ClassInfo::all());
@@ -52,7 +61,7 @@ class AdmissionApplicationController extends Controller
     public function personal(PersonalInfoFormRequest $request){
         try{
             if(session('admission_user_id') == null){
-                return redirect()->route('admission.personal')->with('errorMessage','Your session has expired. Please login again');
+                return redirect()->route('admission.login')->with('errorMessage','Your session has expired. Please login again');
             }
             // $userExist = AdmissionUser::checkUserExist($request->admission_user_id);
             // if($userExist == false ){
@@ -74,15 +83,14 @@ class AdmissionApplicationController extends Controller
             $applicant =$this->admissionService->save($request->validated());
             $applicant_id = $applicant->id;
             session(['applicant_id'=>$applicant_id]);
-            return redirect()->route('admission.parents');
+            return redirect()->route('admission.parents')->with('applicantid',$applicant_id);
         }catch(Exception $e){
             return response()->json([
                 'message'=>'Applicant cannot be created'
             ],404);
         }
     }
-    public function editpersonal(){
-        $applicant = Applicant::find(session('applicant_id'));
+    public function editpersonal(Applicant $applicant){
         $categories = array('ST','GEN','OBC','SC','OTH');
         $religions =ReligionResource::collection(Religion::all());
         $admissiontoclass = ClassInfoResource::collection(ClassInfo::all());
@@ -92,28 +100,50 @@ class AdmissionApplicationController extends Controller
         return view('admission.personal',compact('applicant',
         'categories','religions','states','admissiontoclass'));
     }
-    public function family(){
-        return view('admission.family');
-    }
-    public function parentsInfo(ParentInfoRequest $request){
-        $userExist = AdmissionUser::checkUserExist($request->admission_user_id);
-        if($userExist == false ){
+    public function updatepersonal(PersonalInfoFormRequest $request,Applicant $applicant){
+        try{
+            $applicant->update($request->validated());
+            session(['applicant_id'=>$applicant->id]);
+            return redirect()->route('admission.parents');
+        }catch(Exception $e){
             return response()->json([
-                'message'=>'User does not exist'
+                'message'=>'Applicant cannot be updated'
             ],404);
         }
-        $applicant =$this->admissionService->updateParentInfo($request->validated(),$request->applicant_id);
-        return response()->json([
-            'data'=>$applicant,
-            'message'=>'record updated'
-        ],201);
+    }
+    public function family(){
+        if(session('applicant_id') == null){
+            return redirect()->route('admission.dashboard')->with('errorMessage','Select the child to update the parent information');
+        }
+        $parent = Applicant::find(session('applicant_id'));
+        return view('admission.family',compact('parent'));
+    }
+    public function parentsInfo(ParentInfoRequest $request){
+        if(session('admission_user_id') == null){
+            return redirect()->route('admission.login')->with('errorMessage','Your session has expired. Please login again');
+        }
+        if(session('applicant_id')==null){
+            return redirect()->route('admission.dashboard')->with('errorMessage','Select the child to update the parent information');
+        }
+        $applicant =$this->admissionService->updateParentInfo($request->validated(),session('applicant_id'));
+        return redirect()->route('admission.documents');
+    }
+    public function editparents(Applicant $applicant){
+        return view('admission.family',compact('applicant'));
+    }
+
+    public function documents(){
+        $applicant = Applicant::find(session('applicant_id'));
+        if($applicant == null){
+            return redirect()->route('admission.dashboard')->with('errorMessage','Select the child to update the parent information');
+        }
+        return view('admission.uploaddocument')->with('applicant',$applicant);
     }
     public function uploadDocuments(DocumentTypeCheckRequest $request){
         try{
             $res = $this->admissionService->uploadDocuments($request);
             return response()->json([
-                'data'=>$res,
-                'message'=>'Documents uploaded'
+                'message'=>$res,
             ],201);
         }catch(Exception $e){
             return response()->json([
@@ -144,5 +174,16 @@ class AdmissionApplicationController extends Controller
                 'message'=>$e->getMessage()
             ],404);
         }
+    }
+
+    public function preview(){
+        $applicant = Applicant::find(session('applicant_id'));
+        if($applicant == null){
+            return redirect()->route('admission.dashboard')->with('errorMessage','Select the child to update the parent information');
+        }
+        if($this->admissionService->checkRequiredDocuments($applicant) ==false){
+            return redirect()->route('admission.documents')->with('errorMessage','Upload the required documents');
+        }
+        return view('admission.preview',compact('applicant'));
     }
 }

@@ -10,6 +10,22 @@ composer require laravel/ui --dev
 php artisan ui bootstrap --auth
 npm install
 
+//to use axios and bootstrap add the followin line in app.blade.php
+
+<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+//to use fontawesome
+npm install @fortawesome/fontawesome-free
+//in resources/sass/app.scss we import the fontawesome css
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/brands";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/v4-shims";
+
+//copy the webfont folder from node_modules/@forawesome/fontawesome-free/webfonts and paste it in resources folder of your project
+
 to run vite: npm run dev
 
 jwt authentication

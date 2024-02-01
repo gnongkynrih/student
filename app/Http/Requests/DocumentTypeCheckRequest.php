@@ -22,20 +22,13 @@ class DocumentTypeCheckRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'passport' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:100',
-            'family_pic' => 'required|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'baptism_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'father_id' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'mother_id' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'caste_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'birth_certificate' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            'address_proof' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:500',
-            
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,pdf|max:200',
+            'source' =>'required|string'   
         ];
     }
     public function  messages(){
         return [
-            'family_pic.max' => 'The family picture should not be greater than 500 kilobytes.',
+            'image.max' => 'The documents should not be greater than 200 Kb.',
         ];
     }
 }

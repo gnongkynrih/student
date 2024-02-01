@@ -1,3 +1,15 @@
 .card {
-    background-color: red;
+    background-color: rgb(183, 15, 150);
+    color: #fff;
+}
+.btn-primary {
+    background-color: rgb(34, 58, 219);
+}
+.btn-secondary {
+    background-color: burlywood;
+}
+.required::after {
+    content: "*";
+    color: #fff;
+    margin-left: 1px; /* Adjust as needed */
 }

@@ -22,8 +22,6 @@ class ParentInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'admission_user_id'=>'required|integer',
-            'applicant_id'=>'required|integer',
             'father_name'=>'nullable|string|max:60',
             'mother_name'=>'required|string|max:60',
             'father_occupation'=>'nullable|string|max:60',

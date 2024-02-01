@@ -42,14 +42,20 @@ Route::controller(AdmissionUserController::class)->group(function(){
 Auth::routes();
 
 Route::controller(AdmissionApplicationController::class)->group(function(){
+    Route::get('/admission/dashboard','dashboard')->name('admission.dashboard');
     Route::get('/admission/parents','family')->name('admission.parents');
-    Route::post('/admission/parents','parentsInfo')->name('admission.parentsinfo');
-    Route::get('/admission/editpersonal','editpersonal')->name('admission.editpersonal');
+    Route::put('/admission/parents','parentsInfo')->name('admission.parentsinfo');
+    Route::get('/admission/editparents/{applicant}','editparents')->name('admission.editparents');
+    Route::get('/admission/editpersonal/{applicant}','editpersonal')->name('admission.editpersonal');
+    Route::put('/admission/updatepersonal/{applicant}','updatepersonal')->name('admission.updatepersonal');
     Route::get('/admission/personal','getPersonalInfo')->name('admission.getpersonalinfo');
     Route::post('/admission/personal','personal')->name('admission.personal');
+    Route::get('/admission/documents','documents')->name('admission.documents');
     Route::post('/admission/upload','uploadDocuments')->name('admission.upload');
-    Route::get('/admission/{id}','show')->name('admission.show');
+    
+    Route::get('/admission/preview','preview')->name('admission.preview');
     Route::post('/admission/submit','submit')->name('admission.submit');
+    Route::get('/admission/{id}','show')->name('admission.show');
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

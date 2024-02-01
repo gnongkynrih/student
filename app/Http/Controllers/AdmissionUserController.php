@@ -59,49 +59,50 @@ class AdmissionUserController extends Controller
     public function thankyou(){
         return view('admissionuser.thankyou');
     }
-    // public function login(LoginRequest $request){
-    //     try{
-    //         //select * from admission_users where mobile = $request->mobile
-    //         // limit 1
-    //         $user = AdmissionUser::where('mobile',$request->mobile)->first();
-    //         if($user){
-    //             if(Hash::check($request->password,$user->password)){
-    //                 return response()->json([
-    //                     'data'=>new RegisterResource($user),
-    //                     'message'=>'User logged in'
-    //                 ],200);
-    //             }else{
-    //                 return response()->json([
-    //                     'message'=>'Incorrect user credential'
-    //                 ],404);
-    //             }
-    //         }else{
-    //             return response()->json([
-    //                 'message'=>'Incorrect user credential'
-    //             ],404);
-    //         }
-    //     }catch(Exception $e){
-    //         return response()->json([
-    //             'message'=>'User cannot be logged in'
-    //         ],404);
-    //     }
-    // }
+
+    public function loginpage(){
+        session()->forget('admission_user_id');
+        session()->forget('applicant_id');
+        return view('admissionuser.loginpage');
+    }
+    public function login(LoginRequest $request){
+        try{
+            //select * from admission_users where mobile = $request->mobile
+            // limit 1
+            $user = AdmissionUser::where('email',$request->email)->first();
+            if($user){
+                if(Hash::check($request->password,$user->password)){
+                    //store the userid in a session
+                    session(['admission_user_id'=>$user->id]);
+                    return redirect()->route('admission.dashboard');
+                }else{
+                    return redirect()->back()->with('errorMessage','Incorrect user credential');
+                }
+            }else{
+                return redirect()->back()->with('errorMessage','Incorrect user credential');
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'message'=>'User cannot be logged in'
+            ],404);
+        }
+    }
 
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
-    {
-        $credentials = request(['mobile', 'password']);
+    // public function login()
+    // {
+    //     $credentials = request(['mobile', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+    //     if (! $token = auth()->attempt($credentials)) {
+    //         return response()->json(['error' => 'Unauthorized'], 401);
+    //     }
 
-        return $this->respondWithToken($token);
-    }
+    //     return $this->respondWithToken($token);
+    // }
 
     /**
      * Get the authenticated User.

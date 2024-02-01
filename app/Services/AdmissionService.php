@@ -6,6 +6,7 @@ use App\Models\Applicant;
 use Illuminate\Support\Str;
 use App\Models\ApplicationForm;
 use Carbon\Exceptions\Exception;
+use Illuminate\Support\Facades\Storage;
 
 class AdmissionService
 {
@@ -18,45 +19,56 @@ class AdmissionService
       return Applicant::updateOrCreate(['id'=>$studentid],$data);
     }
 
-    protected function saveImage($imageSource,$request){
-      $image = $request->file($imageSource);
+    protected function saveImage($request){
+      $image = $request->file('image');
       $path = $image->store('admission/'.date("Y"), 'public');
       return $path;
     }
     public function uploadDocuments($request){
       try{
-        $applicant = Applicant::find($request->id);
+        $applicant = Applicant::find(session('applicant_id'));
         if($applicant == null){
           throw new \Exception('User detail not found');
         }
-        if ($request->hasFile('passport')) {
-            $applicant->passport = $this->saveImage('passport',$request);
-        }
-        if ($request->hasFile('family_pic')) {
-            $applicant->family_pic = $this->saveImage('family_pic',$request);
-        }
-        if ($request->hasFile('baptism_certificate')) {
-            $applicant->baptism_certificate = $this->saveImage('baptism_certificate',$request);
-        }
-        if ($request->hasFile('father_id')) {
-            $applicant->father_id = $this->saveImage('father_id',$request);
-        }
-        if ($request->hasFile('mother_id')) {
-            $applicant->mother_id = $this->saveImage('mother_id',$request);
-        }
-        if ($request->hasFile('caste_certificate')) {
-            $applicant->caste_certificate = $this->saveImage('caste_certificate',$request);
-        }
-        if ($request->hasFile('birth_certificate')) {
-          $applicant->birth_certificate = $this->saveImage('birth_certificate',$request);
-        }
-        if ($request->hasFile('address_proof')) {
-          $applicant->address_proof = $this->saveImage('address_proof',$request);
+        $path = $this->saveImage($request);
+        switch($request->source){
+          case 'passport':
+            $applicant->passport = $path;
+            break;
+          case 'birth_certificate':
+            $applicant->birth_certificate = $path;
+            break;
+          case 'family_pic':
+            $applicant->family_pic = $path;
+            break;
+          case 'baptism_certificate':
+            $applicant->baptism_certificate = $path;
+            break;
+          case 'father_id':
+            $applicant->father_id = $path;
+            break;
+          case 'mother_id':
+            $applicant->mother_id = $path;
+            break;
+          case 'caste_certificate':
+            $applicant->caste_certificate = $path;
+            break;
+          case 'address_proof':
+            $applicant->address_proof = $path;
+            break;
+
         }
         $applicant->save();
-        return true;
+        $data = array(
+          'path' =>Storage::url($path),
+          'message' =>'ok'
+        );
+        return $data;
       }catch(Exception $e){
-        return false;
+        $data = array(
+          'message' =>'error'
+        );
+        return $data;
       }
     }
     public function submit($applicantId){
@@ -78,5 +90,13 @@ class AdmissionService
       $applicant->status = 'submitted';
       $applicant->save();
       return $appno->id;
+    }
+    public function checkRequiredDocuments($applicant){
+      if($applicant->passport == null || $applicant->birth_certificate == null 
+      || $applicant->family_pic == null || $applicant->baptism_certificate == null 
+      || ($applicant->father_id == null && $applicant->mother_id == null)){
+        return false;
+      }
+      return true;
     }
 }

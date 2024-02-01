@@ -10,8 +10,10 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    <link rel="stylesheet" href="resources/css/app.css">
+    @vite(['resources/sass/app.scss', 'resources/js/app.js','resources/css/app.css'])
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body>
     <div id="app">
