@@ -1,4 +1,4 @@
-AFTER DOWNLOADING THE CODE
+AFTER DOWNLOADING THE CODE (you will need nodejs and composer and php 8.2 and mysql)
 -- npm install
 -- composer install
 
