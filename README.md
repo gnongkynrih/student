@@ -68,3 +68,19 @@ in the applicants table to link with admission users table the fk column will be
 
 php artisan make:migration add_column_a
 ddress_proof_to_table_applicants --table=applicants
+
+razorpay
+https://razorpay.com/docs/payments/server-integration/php/install/#prerequisites
+
+Add Below Details For Trial :
+
+Visa Card No : 4111111111111111
+
+Mobile No : 1231231231
+
+OTP No : **\***
+razorpay_payment_id
+
+pdf
+composer require barryvdh/laravel-dompdf
+reference... https://www.positronx.io/how-to-generate-pdf-in-laravel-with-dompdf/#tc_10431_02

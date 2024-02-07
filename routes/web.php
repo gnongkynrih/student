@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\ClassInfoController;
 use App\Http\Controllers\AdmissionUserController;
+use App\Http\Controllers\AdmissionPaymentController;
 use App\Http\Controllers\AdmissionApplicationController;
 
 
@@ -58,4 +59,11 @@ Route::controller(AdmissionApplicationController::class)->group(function(){
     Route::get('/admission/{id}','show')->name('admission.show');
 });
 
+
+Route::controller(AdmissionPaymentController::class)->group(function(){
+    Route::get('/admissionpayment/create', 'create')->name('admissionpayment.create');
+    Route::post('/admissionpayment/processpayment', 'processPayment')->name('admissionpayment.processpayment');
+    Route::get('/admissionpayment/razor-thank-you', 'RazorThankYou')->name('admissionpayment.razorthankyou');
+    Route::get('/admissionpayment/downloadreceipt/{id}', 'downloadReceipt')->name('admissionpayment.downloadreceipt');
+  });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

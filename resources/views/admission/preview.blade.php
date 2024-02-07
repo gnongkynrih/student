@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <div class="container">
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mb-3">
     <table class="table table-bordered table-responsive table-sm">
       <tr>
         <th>Admission to class</th>
@@ -18,6 +18,9 @@
       
     </table>
     <a href="#" id="viewdocument" data-bs-toggle="modal" data-bs-target="#exampleModal">Click to view uploaded documents</a>
+  </div>
+  <div class="row justify-content-end">
+    <a href="{{route('admissionpayment.create')}}">Pay Admission Fee</a>
   </div>
 </div>
 <div class="modal fade modal-fullscreen" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
