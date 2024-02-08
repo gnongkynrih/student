@@ -7,6 +7,7 @@ use App\Models\Applicant;
 use App\Models\ClassInfo;
 use Illuminate\Http\Request;
 use App\Models\AdmissionUser;
+use App\Models\AdmissionPayment;
 use App\Services\UtilityService;
 use App\Services\AdmissionService;
 use App\Http\Requests\ParentInfoRequest;
@@ -28,13 +29,15 @@ class AdmissionApplicationController extends Controller
 
     public function dashboard(){
         session(['applicant_id'=>null]);
+        $payments = AdmissionPayment::where('admission_user_id','=',session('admission_user_id'))->get();
         if(session('admission_user_id') == null){
             return redirect()->route('admission.loginpage')->with('errorMessage','Your session has expired. Please login again');
         }
-
+        $paidapplicant = AdmissionPayment::where('admission_user_id',session('admission_user_id'))
+         ->where('status','success')->get();
         //get all applicants
         $applicants = Applicant::where('admission_user_id','=',session('admission_user_id'))->get();
-        return view('admission.dashboard',compact('applicants'));
+        return view('admission.dashboard',compact('applicants','payments','paidapplicant'));
     }
     public function show($id){
         $applicant = Applicant::find($id);

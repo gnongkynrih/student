@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('admission_payments', function (Blueprint $table) {
             $table->id();
-            $table->string('r_payment_id');
+            $table->string('r_payment_id')->nullable();
             $table->string('applicant_id');
             $table->string('admission_user_id');
             $table->integer('academic_year')->default(Carbon::now()->year);

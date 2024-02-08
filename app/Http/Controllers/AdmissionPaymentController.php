@@ -13,7 +13,8 @@ use App\Models\AdmissionPayment;
 class AdmissionPaymentController extends Controller
 {
     public function create(){
-        $misc = Misc::first();
+        try{
+            $misc = Misc::first();
         $amount = $misc->admission_form_fee;
         $applicant = Applicant::find(session('applicant_id'));
         
@@ -23,10 +24,22 @@ class AdmissionPaymentController extends Controller
             'currency'        => 'INR'
         ];
         $api = new Api(env('RAZOR_KEY'), env('RAZOR_SECRET'));
+        //generates the order_id ffrom razor pay
         $razorpayOrder = $api->order->create($orderData);
         $order_id = $razorpayOrder->id;
+        $payment = AdmissionPayment::create([
+                    'applicant_id' => session('applicant_id'), //session('applicant_id'
+                    'admission_user_id' => session('admission_user_id'),
+                    'academic_year' => Carbon::now()->year,
+                    'status' => 'pending',
+                    'amount' => $amount,
+                    'order_id' => $order_id
+                ]);
         session(['order_id' => $order_id]);
         return view('admissionpayment.create',compact('amount','applicant','order_id'));
+        }catch(Exception $e){
+            return back()->with('errorMessage',$e->getMessage());
+        }
     }
     public function processPayment(Request $request){
         
@@ -35,15 +48,12 @@ class AdmissionPaymentController extends Controller
                 $razorpaymentId = $request->razorpay_payment_id;
                 $api = new Api(env('RAZOR_KEY'), env('RAZOR_SECRET'));
                 $response = $api->payment->fetch($razorpaymentId);
-                $payment = AdmissionPayment::create([
-                    'r_payment_id' => $razorpaymentId,
-                    'applicant_id' => session('applicant_id'), //session('applicant_id'
-                    'admission_user_id' => session('admission_user_id'),
-                    'academic_year' => Carbon::now()->year,
-                    'status' => 'success',
-                    'amount' => $response['amount'] / 100, //converting to rupees from paise
-                    'order_id' => session('order_id')
-                ]);
+                $payment = AdmissionPayment::where('order_id',session('order_id'))->first();
+                if($payment != null){
+                    $payment->status = 'success';
+                    $payment->r_payment_id = $razorpaymentId;
+                    $payment->save();
+                }
                 
                 session(['payment_id' => $razorpaymentId]);
                 return redirect()->route('admissionpayment.razorthankyou')
@@ -76,5 +86,23 @@ class AdmissionPaymentController extends Controller
         ];
         $pdf = PDF::loadView('admissionpayment.receipt',$data);
         return $pdf->download('receipt.pdf');
+    }
+
+    public function verifyPayment($id){
+        $api = new Api(env('RAZOR_KEY'), env('RAZOR_SECRET'));
+
+        $response = $api->order->fetch($id)->payments();
+        dd($response);
+    }
+    public function downloadForm($id){
+        $applicant = Applicant::find($id);
+        $form = [
+            'name' => $applicant->fullname,
+            'dob' => $applicant->dob,
+            'religion' => $applicant->religion->name,
+            'passport' => $applicant->passport,
+        ];
+        $pdf = PDF::loadView('admissionpayment.applicationform',$form);
+        return $pdf->download('applicationform.pdf');
     }
 }

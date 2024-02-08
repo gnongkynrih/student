@@ -43,7 +43,7 @@ Route::controller(AdmissionUserController::class)->group(function(){
 Auth::routes();
 
 Route::controller(AdmissionApplicationController::class)->group(function(){
-    Route::get('/admission/dashboard','dashboard')->name('admission.dashboard');
+    Route::get('/admission','dashboard')->name('admission.dashboard');
     Route::get('/admission/parents','family')->name('admission.parents');
     Route::put('/admission/parents','parentsInfo')->name('admission.parentsinfo');
     Route::get('/admission/editparents/{applicant}','editparents')->name('admission.editparents');
@@ -65,5 +65,7 @@ Route::controller(AdmissionPaymentController::class)->group(function(){
     Route::post('/admissionpayment/processpayment', 'processPayment')->name('admissionpayment.processpayment');
     Route::get('/admissionpayment/razor-thank-you', 'RazorThankYou')->name('admissionpayment.razorthankyou');
     Route::get('/admissionpayment/downloadreceipt/{id}', 'downloadReceipt')->name('admissionpayment.downloadreceipt');
+    Route::get('/admissionpayment/verifypayment/{id}', 'verifyPayment')->name('admissionpayment.verifypayment');
+    Route::get('/admissionpayment/downloadform/{id}', 'downloadForm')->name('admission.downloadform');
   });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
